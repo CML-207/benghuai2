@@ -48,7 +48,7 @@ for i in result:
     print(i[1])
 '''
 shuijing = np.array(result[2][1]).astype(np.int_)  # 如水晶不是第3个识别内容，谨慎调整数字“2”
-print('Program strat at: %d 月 %d 日 %d 时 %d 分 \t' % (int(timenow.tm_mon), int(st_time/1e2), int(st_time%1e2), int(timenow.tm_min)), '水晶： %d' % shuijing)
+print('Program start at: %d 月 %d 日 %d 时 %d 分 \t' % (int(timenow.tm_mon), int(st_time/1e2), int(st_time%1e2), int(timenow.tm_min)), '水晶： %d' % shuijing)
 
 word = result[-1][1]
 try:
@@ -137,3 +137,4 @@ img = cv2.cvtColor(np.asarray(img), cv2.COLOR_RGB2BGR)
 result = reader.readtext(img)
 shuijing = np.array(result[2][1]).astype(np.int_)
 print('Program end at: %d 月 %d 日 %d 时 %d 分 \t' % (int(timenow.tm_mon), int(st_time/1e2), int(st_time%1e2), int(timenow.tm_min)), '水晶： %d' % shuijing)
+print('成功次数： %d / %d， 失败次数： %d / %d' % (suc, looptime, unsuc, looptime))
