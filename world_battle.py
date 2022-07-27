@@ -11,7 +11,7 @@ import numpy as np
 
 clickinterval = 1  # 鼠标点击间隔，秒
 loopinterval = 62  # 脚本完整循环时间，秒
-looptime = 100  # 执行完整脚本的次数
+looptime = 10  # 执行完整脚本的次数
 screen = pa.size()
 simulator = [1440, 810]  # 模拟器窗口的分辨率，在模拟器设置中可查看，【宽，高】
 tl_min = 50  # 体力下限，小于这个值则花水晶补充体力
@@ -47,8 +47,8 @@ result = reader.readtext(img)
 for i in result:
     print(i[1])
 '''
-shuijing = np.array(result[2][1]).astype(np.int_)  # 如水晶不是第3个识别内容，谨慎调整数字“2”
-print('Program start at: %d 月 %d 日 %d 时 %d 分 \t' % (int(timenow.tm_mon), int(st_time/1e2), int(st_time%1e2), int(timenow.tm_min)), '水晶： %d' % shuijing)
+shuijing0 = np.array(result[2][1]).astype(np.int_)  # 如水晶不是第3个识别内容，谨慎调整数字“2”
+print('Program start at: %d 月 %d 日 %d 时 %d 分 \t' % (int(timenow.tm_mon), int(st_time/1e2), int(st_time%1e2), int(timenow.tm_min)), '水晶： %d' % shuijing0)
 
 word = result[-1][1]
 try:
@@ -135,6 +135,7 @@ img = pa.screenshot(region=[screen.width/2 - simulator[0]/2, screen.height/2 - s
 reader = eo.Reader(['en'])
 img = cv2.cvtColor(np.asarray(img), cv2.COLOR_RGB2BGR)
 result = reader.readtext(img)
-shuijing = np.array(result[2][1]).astype(np.int_)
-print('Program end at: %d 月 %d 日 %d 时 %d 分 \t' % (int(timenow.tm_mon), int(st_time/1e2), int(st_time%1e2), int(timenow.tm_min)), '水晶： %d' % shuijing)
+shuijing1 = np.array(result[2][1]).astype(np.int_)
+print('Program end at: %d 月 %d 日 %d 时 %d 分 \t' % (int(timenow.tm_mon), int(st_time/1e2), int(st_time%1e2), int(timenow.tm_min)), '水晶： %d' % shuijing1)
+print('花费水晶： %d' % (shuijing0 - shuijing1))
 print('成功次数： %d / %d， 失败次数： %d / %d' % (suc, looptime, unsuc, looptime))
