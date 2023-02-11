@@ -137,8 +137,14 @@ def shijie_boss():
         ti.sleep(sleep_s)
         pa.click(im_path + 'shimodeai_queding.png')
         ti.sleep(sleep_s)
-        pa.click(im_path + 'shimodeai_fanhui.png')
-        ti.sleep(sleep_s)
+
+        # 试图越过升级
+        for i in range(3):
+            pa.click([screen.width / 2, screen.height / 2])  # 注意顺序??
+            ti.sleep(sleep_s)
+        if pa.locateOnScreen(im_path + 'shimodeai_fanhui.png'):
+            pa.click(im_path + 'shimodeai_fanhui.png')
+            ti.sleep(sleep_s)
 
     # 下面开始虚轴之庭
     if pa.locateOnScreen(im_path + 'xuzhouzhiting.png'):
@@ -189,12 +195,12 @@ def lingshimo():
         if pa.locateOnScreen(im_path + 'dianjilingqujiangli_%s.png' % loop):
             pa.click(im_path + 'dianjilingqujiangli_%s.png' % loop)
             ti.sleep(sleep_s)
-            if pa.locateOnScreen(im_path + 'queding.png'):
-                pa.click(im_path + 'queding.png')
+            pa.click()
+            ti.sleep(sleep_s)
+            if pa.locateOnScreen(im_path + 'yichu_queding.png'):
+                pa.click(im_path + 'yichu_queding.png')
                 ti.sleep(sleep_s)
-            else:
-                pa.click()
-                ti.sleep(sleep_s)
+
     # 领完后放使魔
     for loop in ['jin', 'zi', 'lan', 'lv']:
         if pa.locateOnScreen(im_path + 'dianjixuanzeshimo_%s.png' % loop):
@@ -259,6 +265,9 @@ def cunzaigan():  # 领存在感以及社团体力
         ti.sleep(sleep_s)
     if pa.locateOnScreen(im_path + 'shetuan_lingqu.png'):
         pa.click(im_path + 'shetuan_lingqu.png')
+        ti.sleep(sleep_s)
+    if pa.locateOnScreen(im_path + 'yichu_queding.png'):  # 溢出
+        pa.click(im_path + 'yichu_queding.png')
         ti.sleep(sleep_s)
     while pa.locateOnScreen(im_path + 'queding.png'):
         pa.click(im_path + 'queding.png')
@@ -325,18 +334,28 @@ def qidongyouxi(iaccount):  # 对第i个账号启动游戏, iaccount为 [0, 3]
             ti.sleep(sleep_s)
 
     # # 等待进入登陆界面
+    # 1.领7天循环的每日奖励； 2.生日； 3.今日不再提醒 * n； 4.关闭公告； 5.某些活动
     # 角色过生日的判断、新增活动如转转乐的判断并没有加入
     i = 0
     while i < 1:
         if pa.locateOnScreen(im_path + 'lingqumeiriqiandao.png') or pa.locateOnScreen(
-                im_path + 'jinribuzaitishi.png') or pa.locateOnScreen(im_path + 'gonggao.png') or pa.locateOnScreen(im_path + 'zhuangbei_hei.png'):
+                im_path + 'jinribuzaitishi.png') or pa.locateOnScreen(im_path + 'gonggao.png') or pa.locateOnScreen(
+            im_path + 'zhuangbei_hei.png') or pa.locateOnScreen(im_path + 'shengrikuaile.png'):
             i += 1
         else:
-            pa.click([screen.height / 2, screen.width / 2])  # 注意顺序??
+            pa.click([screen.width / 2, screen.height / 2])  # 注意顺序??
             ti.sleep(sleep_s)
 
     while pa.locateOnScreen(im_path + 'lingqumeiriqiandao.png'):
         pa.click(im_path + 'lingqumeiriqiandao.png')
+        ti.sleep(sleep_s)
+    while pa.locateOnScreen(im_path + 'shengrikuaile.png'):
+        pa.click(im_path + 'shengrikuaile.png')
+        ti.sleep(sleep_s)
+        if pa.locateOnScreen(im_path + 'yichu_queding.png'):  # 溢出
+            pa.click(im_path + 'yichu_queding.png')
+            ti.sleep(sleep_s)
+        pa.click(im_path + 'shengrikuaile_lingqu.png')
         ti.sleep(sleep_s)
     while pa.locateOnScreen(im_path + 'jinribuzaitishi.png'):
         pa.click(im_path + 'jinribuzaitishi.png')
@@ -348,6 +367,10 @@ def qidongyouxi(iaccount):  # 对第i个账号启动游戏, iaccount为 [0, 3]
         pa.click(im_path + 'lingquhuodongqiandao.png')
         ti.sleep(sleep_s)
 
+    # 试图越过新获得cg或头像
+    for i in range(3):
+        pa.click([screen.width / 2, screen.height / 2])  # 注意顺序??
+        ti.sleep(sleep_s)
 
 # start
 sleep_s = 5  # sec
