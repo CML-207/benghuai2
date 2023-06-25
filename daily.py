@@ -1,6 +1,6 @@
 # 自动完成每日存在感以及10分钟在线任务
 # written by Zhenlin Tan
-# 基于图像识别，每操作一次都要检查是否闪退，是否正在联网
+# 基于图像识别easyocr，每操作一次间隔可以设定
 # 需要关闭模拟器的按键提示（F12）
 
 import random
@@ -30,6 +30,13 @@ def loc_str(res, string):  # 如果有多个结果，返回第一个结果的坐
     xloc = (res[index][0][0][0] + res[index][0][2][0]) / 2
     yloc = (res[index][0][0][1] + res[index][0][2][1]) / 2
     return xloc, yloc
+
+
+def judge_name(namelist, judgelist):
+    for iname in namelist:
+        if iname in judgelist:
+            return iname
+    return False
 
 
 def start_simulator():
@@ -122,8 +129,9 @@ def home_page():
     i = 0
     while i < 1:
         result = ocr_ch(zpx, zpy, zpx + simulator[0], zpy + simulator[1])
-        if '领取' in result[:, 1] or '今曰不再提示' in result[:, 1] or '系统公告' in result[:, 1] or '生曰快乐' in result[:, 1] or pa.locateOnScreen(
-                    im_path + 'zhuangbei_hei.png'):
+        if '领取' in result[:, 1] or '今曰不再提示' in result[:, 1] or '系统公告' in result[:, 1] or '生曰快乐' in result[:,
+                                                                                                   1] or pa.locateOnScreen(
+                im_path + 'zhuangbei_hei.png'):
             i += 1
         else:
             pa.click([screen.width / 2, screen.height / 2])  # 注意顺序??
@@ -202,13 +210,12 @@ def qianghuashimo():
             pa.click(zpx + xloc, zpy + yloc)
             ti.sleep(sleep_s)
             result = ocr_ch(zpx, zpy, zpx + simulator[0], zpy + simulator[1])
-        if '下条' in result[:, 1]:
-            xloc, yloc = loc_str(result, '下条')
+        # 20230622
+        ielem = judge_name(NEXT, result[:, 1])
+        if ielem:
+            xloc, yloc = loc_str(result, ielem)
             pa.click(zpx + xloc, zpy + yloc)
             ti.sleep(sleep_s)
-            result = ocr_ch(zpx, zpy, zpx + simulator[0], zpy + simulator[1])
-        if '返回' in result[:, 1]:
-            xloc, yloc = loc_str(result, '返回')
             pa.click(zpx + xloc, zpy + yloc)
             ti.sleep(sleep_s)
             result = ocr_ch(zpx, zpy, zpx + simulator[0], zpy + simulator[1])
@@ -222,7 +229,7 @@ def qianghuashimo():
         ti.sleep(sleep_s)
         pa.click(clicks=2)
         ti.sleep(sleep_s)
-    
+
         # 寻找光碟作为材料
         i = 0
         while i < 1:
@@ -241,15 +248,11 @@ def qianghuashimo():
         ti.sleep(sleep_s)
 
         result = ocr_ch(zpx, zpy, zpx + simulator[0], zpy + simulator[1])
-        if '选择_' in result[:, 1] or '选择' in result[:, 1]:  ##
-            try:
-                xloc, yloc = loc_str(result, '选择_')
-                pa.click(zpx + xloc, zpy + yloc)
-                ti.sleep(sleep_s)
-            except:
-                xloc, yloc = loc_str(result, '选择')
-                pa.click(zpx + xloc, zpy + yloc)
-                ti.sleep(sleep_s)
+        ielem = judge_name(choose, result[:, 1])
+        if ielem:
+            xloc, yloc = loc_str(result, ielem)
+            pa.click(zpx + xloc, zpy + yloc)
+            ti.sleep(sleep_s)
             result = ocr_ch(zpx, zpy, zpx + simulator[0], zpy + simulator[1])
         if '开始强化 ' in result[:, 1]:  ##
             xloc, yloc = loc_str(result, '开始强化 ')
@@ -294,19 +297,10 @@ def shijie_boss():
         pa.click(zpx + xloc, zpy + yloc)
         ti.sleep(sleep_s)
         result = ocr_ch(zpx, zpy, zpx + simulator[0], zpy + simulator[1])
-    if '使魔爱' in result[:, 1]:  ##
-        xloc, yloc = loc_str(result, '使魔爱')
-        pa.click(zpx + xloc, zpy + yloc + 100)
-        ti.sleep(sleep_s)
 
-        result = ocr_ch(zpx, zpy, zpx + simulator[0], zpy + simulator[1])
-    if '使魔的爱' in result[:, 1]:  ##
-        xloc, yloc = loc_str(result, '使魔的爱')
-        pa.click(zpx + xloc, zpy + yloc + 100)
-        ti.sleep(sleep_s)
-        result = ocr_ch(zpx, zpy, zpx + simulator[0], zpy + simulator[1])
-    if '使魔的爱 5' in result[:, 1]:  ##
-        xloc, yloc = loc_str(result, '使魔的爱 5')
+    ielem = judge_name(pet30, result[:, 1])
+    if ielem:  ##
+        xloc, yloc = loc_str(result, ielem)
         pa.click(zpx + xloc, zpy + yloc + 100)
         ti.sleep(sleep_s)
         result = ocr_ch(zpx, zpy, zpx + simulator[0], zpy + simulator[1])
@@ -316,17 +310,20 @@ def shijie_boss():
         pa.click(zpx + xloc, zpy + yloc)
         ti.sleep(sleep_s)
         result = ocr_ch(zpx, zpy, zpx + simulator[0], zpy + simulator[1])
-    if '碾' in result[:, 1]:  ##
-        xloc, yloc = loc_str(result, '碾')
+    ielem = judge_name(YES, result[:, 1])
+    if ielem:
+        xloc, yloc = loc_str(result, ielem)
         pa.click(zpx + xloc, zpy + yloc)
         ti.sleep(sleep_s)
 
     result = ocr_ch(zpx, zpy, zpx + simulator[0], zpy + simulator[1])
-    while '确定' in result[:, 1]:
-        xloc, yloc = loc_str(result, '确定')
+    ielem = judge_name(YES, result[:, 1])
+    while ielem:
+        xloc, yloc = loc_str(result, ielem)
         pa.click(zpx + xloc, zpy + yloc)
         ti.sleep(sleep_s)
         result = ocr_ch(zpx, zpy, zpx + simulator[0], zpy + simulator[1])
+        ielem = judge_name(YES, result[:, 1])
 
     if pa.locateOnScreen(im_path + 'shimodeai_fanhui.png'):
         pa.click(im_path + 'shimodeai_fanhui.png')
@@ -334,8 +331,9 @@ def shijie_boss():
 
     # 下面开始虚轴之庭
     result = ocr_ch(zpx, zpy, zpx + simulator[0], zpy + simulator[1])
-    if '虚轴2屣' in result[:, 1]:  ##
-        xloc, yloc = loc_str(result, '虚轴2屣')
+    ielem = judge_name(worldboss, result[:, 1])
+    if ielem:
+        xloc, yloc = loc_str(result, ielem)
         pa.click(zpx + xloc, zpy + yloc)
         ti.sleep(sleep_s)
         result = ocr_ch(zpx, zpy, zpx + simulator[0], zpy + simulator[1])
@@ -346,17 +344,12 @@ def shijie_boss():
         result = ocr_ch(zpx, zpy, zpx + simulator[0], zpy + simulator[1])
 
     while '快捷战斗' in result[:, 1]:
-        if '碾' in result[:, 1] or '确定' in result[:, 1]:  ##
-            try:
-                xloc, yloc = loc_str(result, '碾')
-                pa.click(zpx + xloc, zpy + yloc)
-                ti.sleep(sleep_s)
-                result = ocr_ch(zpx, zpy, zpx + simulator[0], zpy + simulator[1])
-            except:
-                xloc, yloc = loc_str(result, '确定')
-                pa.click(zpx + xloc, zpy + yloc)
-                ti.sleep(sleep_s)
-                result = ocr_ch(zpx, zpy, zpx + simulator[0], zpy + simulator[1])
+        ielem = judge_name(YES, result[:, 1])
+        if ielem:
+            xloc, yloc = loc_str(result, ielem)
+            pa.click(zpx + xloc, zpy + yloc)
+            ti.sleep(sleep_s)
+            result = ocr_ch(zpx, zpy, zpx + simulator[0], zpy + simulator[1])
             while '确定' in result[:, 1]:
                 xloc, yloc = loc_str(result, '确定')
                 pa.click(zpx + xloc, zpy + yloc)
@@ -434,7 +427,6 @@ def cunzaigan():  # 领存在感以及社团体力
     # 领存在感并截图
     result = ocr_ch(zpx, zpy, zpx + simulator[0], zpy + simulator[1])
     if '存在感' in result[:, 1]:
-
         xloc, yloc = loc_str(result, '存在感')
         pa.click(zpx + xloc, zpy + yloc)
         ti.sleep(sleep_s)
@@ -491,12 +483,19 @@ ti.sleep(sleep_s)
 print('Program start at: ', ti.ctime())
 program_start = ti.time()
 
-im_path = "C:\\Users\\Administrator\\Desktop\\benghuai_mnq\\meirirenwu\\"
-simu_path = "E:\\MUMUmnq\\emulator\\nemu9\\EmulatorShell\\NemuPlayer.exe"
+im_path = "C:\\Users\\90686\\Desktop\\benghuai_mnq\\meirirenwu\\"
+simu_path = "D:\\software\\mumu_mnq\\emulator\\nemu9\\EmulatorShell\\NemuPlayer.exe"
 simulator = [1600, 900]  # 模拟器窗口的分辨率，在模拟器设置中可查看，【宽，高】
 screen = pa.size()
 zpx = screen.width / 2 - simulator[0] / 2  # zero point, width
 zpy = screen.height / 2 - simulator[1] / 2  # zero point, height
+
+# names
+NEXT = ['下-条', '下一条', '下条']  # 刚进入使魔界面需要点击
+pet30 = ['使魔的爰', '使魔爱', '使魔的爱', '使魔的爱 5']  # 使魔的爱
+worldboss = ['虚轴7屣', '虚轴2屣']  # 世界boss
+YES = ['确', '确定', '碾']
+choose = ['选择_', '选择']
 
 n_accounts = 4
 
